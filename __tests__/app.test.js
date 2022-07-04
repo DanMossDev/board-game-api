@@ -83,7 +83,7 @@ describe('/api/categories', () => {
                             comment_count: expect.any(Number)
                         }))
                     })
-                    expect(body[1].comment_count).toBe(3)
+                    expect(body[4].comment_count).toBe(3)
                 })
             })
         })
