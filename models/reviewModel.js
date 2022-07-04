@@ -43,3 +43,15 @@ exports.updateReview = (review_id, votes = 0) => {
     })
     .then(({rows}) => rows[0])
 }
+
+exports.addComment = (review_id, author, body) => {
+    console.log(review_id)
+    return db.query(`
+    INSERT INTO comments
+    (author, body, review_id)
+    VALUES
+    ($1, $2, $3)
+    RETURNING *
+    `, [author, body, parseInt(review_id)])
+    .then(({rows}) => rows[0])
+}

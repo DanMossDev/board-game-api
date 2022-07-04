@@ -5,7 +5,8 @@ const { //CATEGORIES CONTROLLER
 const { //REVIEWS CONTROLLER
     getReview,
     getReviews,
-    patchReview
+    patchReview,
+    postComment
 } = require('./controllers/reviewController')
 const {
     getUsers
@@ -34,6 +35,10 @@ app.get('/api/users', getUsers)
 
 //PATCH
 app.patch('/api/reviews/:review_id', patchReview)
+
+
+//POST
+app.post('/api/reviews/:review_id/comments', postComment)
 
 //ERROR HANDLING
 app.all('*', badPath)

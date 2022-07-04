@@ -158,4 +158,22 @@ describe('/api/categories', () => {
             })
         })
     })
+
+    describe('POST requests', () => {
+        describe('POST /api/reviews/:review_id/comments', () => {
+            test('Happy path', () => {
+                const postedComment = {username: "bainesface", body: "Yes it certainly is one of the games ever"}
+                return request(app).post('/api/reviews/1/comments').expect(201).send(postedComment).then(({body}) => {
+                    expect(body).toEqual({
+                        comment_id: 7,
+                        votes: 0,
+                        created_at: expect.any(String),
+                        author: "bainesface",
+                        body: "Yes it certainly is one of the games ever",
+                        review_id: 1
+                    })
+                })
+            })
+        })
+    })
 })

@@ -1,7 +1,8 @@
 const {
     fetchReviews,
     fetchReview,
-    updateReview
+    updateReview,
+    addComment
 } = require('../models/reviewModel')
 
 exports.getReviews = (req, res, next) => {
@@ -31,4 +32,16 @@ exports.patchReview = (req, res, next) => {
         res.status(200).send(review)
     })
     .catch(err =>  next(err))
+}
+
+exports.postComment = (req, res, next) => {
+    const {review_id} = req.params
+    const {username, body} = req.body
+
+    if (!username || !body) next({statusCode: 400, msg: "Patch body must contain a username and body text for the comment"})
+    addComment(review_id, username, body)
+    .then(comment => {
+        res.status(201).send(comment)
+    })
+    .catch(err => next(err))
 }
