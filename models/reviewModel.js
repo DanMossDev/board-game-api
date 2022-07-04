@@ -24,6 +24,16 @@ exports.fetchReview = (review_id) => {
     })
 }
 
+exports.fetchComments = (review_id) => {
+    return db.query(`
+    SELECT * FROM comments
+    WHERE review_id = $1
+    `, [review_id])
+    .then(({rows}) => {
+        if (!rows[0]) return Promise.reject({statusCode: 404, msg: 'Sorry, there is no review with that ID.'})
+        else return rows
+    })
+}
 
 exports.updateReview = (review_id, votes = 0) => {
     return db.query(`
