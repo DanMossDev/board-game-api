@@ -64,6 +64,27 @@ describe('/api/categories', () => {
                 })
             })
         })
+        describe('GET /api/reviews', () => {
+            test('happy path', () => {
+                return request(app).get('/api/reviews').expect(200).then(({body}) => {
+                    expect(body.length).not.toBe(0)
+                    body.forEach(review => {
+                        expect(review).toEqual(expect.objectContaining({
+                            owner: expect.any(String),
+                            title: expect.any(String),
+                            review_id: expect.any(Number),
+                            category: expect.any(String),
+                            review_img_url: expect.any(String),
+                            created_at: expect.any(String),
+                            votes: expect.any(Number),
+                            review_body: expect.any(String),
+                            designer: expect.any(String),
+                            comment_count: expect.any(Number)
+                        }))
+                    })
+                })
+            })
+        })
     })
 
     describe('PATCH requests', () => {
@@ -99,7 +120,7 @@ describe('/api/categories', () => {
                     expect(body.msg).toBe("Input of incorrect data type.")
                 })
             })
-            test.only('Patch with a review_id that does not exist', () => {
+            test('Patch with a review_id that does not exist', () => {
                 const patchSend = {inc_votes: 20}
                 
                 return request(app).patch('/api/reviews/99')
