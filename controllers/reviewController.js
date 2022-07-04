@@ -1,5 +1,6 @@
 const {
-    fetchReview
+    fetchReview,
+    updateReview
 } = require('../models/reviewModel')
 
 exports.getReview = (req, res, next) => {
@@ -10,4 +11,16 @@ exports.getReview = (req, res, next) => {
         res.status(200).send(review)
     })
     .catch(err => next(err))
+}
+
+exports.patchReview = (req, res, next) => {
+    const {review_id} = req.params
+    const {inc_votes} = req.body
+    
+    if (!inc_votes) next({statusCode: 400, msg: "Patch body must contain the number of incoming votes."})
+    updateReview(review_id, inc_votes)
+    .then(review => {
+        res.status(200).send(review)
+    })
+    .catch(err =>  next(err))
 }

@@ -3,7 +3,8 @@ const { //CATEGORIES CONTROLLER
     getCategories,
 } = require('./controllers/categoryController')
 const { //REVIEWS CONTROLLER
-    getReview
+    getReview,
+    patchReview
 } = require('./controllers/reviewController')
 const {
     getUsers
@@ -28,8 +29,11 @@ app.get('/api/reviews/:review_id', getReview)
 app.get('/api/users', getUsers)
 
 
+//PATCH
+app.patch('/api/reviews/:review_id', patchReview)
+
 //ERROR HANDLING
-app.use('*', badPath)
+app.all('*', badPath)
 
 app.use(customError)
 
