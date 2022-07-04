@@ -174,6 +174,24 @@ describe('/api/categories', () => {
                     })
                 })
             })
+            test('Incorrectly formatted POST body', () => {
+                const postedComment = {beans: "Yes, lots", really: "Really really"}
+                return request(app).post('/api/reviews/1/comments').expect(400).send(postedComment).then(({body}) => {
+                    expect(body.msg).toBe("Patch body must contain a username and body text for the comment")
+                })
+            })
+            test('Valid but non existent review_id', () => {
+                const postedComment = {username: "bainesface", body: "Yes it certainly is one of the games ever"}
+                return request(app).post('/api/reviews/99/comments').expect(404).send(postedComment).then(({body}) => {
+                    expect(body.msg).toBe('Key (review_id)=(99) is not present in table "reviews".')
+                })
+            })
+            test('Invalid review_id', () => {
+                const postedComment = {username: "bainesface", body: "Yes it certainly is one of the games ever"}
+                return request(app).post('/api/reviews/seven/comments').expect(400).send(postedComment).then(({body}) => {
+                    expect(body.msg).toBe("Input of incorrect data type.")
+                })
+            })
         })
     })
 })

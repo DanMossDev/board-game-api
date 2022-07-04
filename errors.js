@@ -13,6 +13,8 @@ exports.psqlError = (err, req, res, next) => {
         case '22P02':
             res.status(400).send({msg: "Input of incorrect data type."})
             break
+        case '23503':
+            res.status(404).send({msg: err.detail})
         default:
             next(err)
             break
