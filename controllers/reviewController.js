@@ -9,6 +9,7 @@ exports.getReviews = (req, res, next) => {
     .then(reviews => {
         res.status(200).send(reviews)
     })
+    .catch(err => next(err))
 }
 
 exports.getReview = (req, res, next) => {
@@ -19,6 +20,10 @@ exports.getReview = (req, res, next) => {
         res.status(200).send(review)
     })
     .catch(err => next(err))
+}
+
+exports.getComments = (req, res, next) => {
+
 }
 
 exports.patchReview = (req, res, next) => {
