@@ -66,7 +66,16 @@ describe('/api/categories', () => {
         })
         describe('GET /api/users', () => {
             test('Happy path', () => {
-                
+                return request(app).get('/api/users').expect(200).then(({body}) => {
+                    expect(body.length).not.toBe(0) 
+                    body.forEach(user => {
+                        expect(user).toEqual(expect.objectContaining({
+                            username: expect.any(String),
+                            name: expect.any(String),
+                            avatar_url: expect.any(String)
+                        }))
+                    })
+                })
             })
         })
     })
@@ -104,7 +113,7 @@ describe('/api/categories', () => {
                     expect(body.msg).toBe("Input of incorrect data type.")
                 })
             })
-            test.only('Patch with a review_id that does not exist', () => {
+            test('Patch with a review_id that does not exist', () => {
                 const patchSend = {inc_votes: 20}
                 
                 return request(app).patch('/api/reviews/99')
