@@ -37,7 +37,7 @@ describe('/api/categories', () => {
                     expect(Array.isArray(body)).toBe(false)
                     expect(typeof body).toBe('object')
 
-                    expect(Object.keys(body).length).toBe(9)
+                    expect(Object.keys(body).length).toBe(10)
 
                     expect(body).toEqual({
                         review_id: 1,
@@ -49,7 +49,8 @@ describe('/api/categories', () => {
                         review_body: 'Farmyard fun!',
                         category: 'euro game',
                         created_at: "2021-01-18T10:00:20.514Z",
-                        votes: 1
+                        votes: 1,
+                        comment_count: 0
                     })
                 })
             })
@@ -99,7 +100,7 @@ describe('/api/categories', () => {
                     expect(body.msg).toBe("Input of incorrect data type.")
                 })
             })
-            test.only('Patch with a review_id that does not exist', () => {
+            test('Patch with a review_id that does not exist', () => {
                 const patchSend = {inc_votes: 20}
                 
                 return request(app).patch('/api/reviews/99')
