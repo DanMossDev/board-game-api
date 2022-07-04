@@ -55,12 +55,68 @@ describe('/api/categories', () => {
             })
             test('Incorrect data type for review_id', () => {
                 return request(app).get('/api/reviews/beans').expect(400).then(({body}) => {
-                    expect(body.msg).toBe("Review ID of incorrect data type. Did you mean to enter an integer?")
+                    expect(body.msg).toBe("Input of incorrect data type.")
                 })
             })
             test('Correct data type but the entry does not exist', () => {
                 return request(app).get('/api/reviews/99').expect(404).then(({body}) => {
                     expect(body.msg).toBe("Sorry, there is no review with that ID.")
+                })
+            })
+        })
+    })
+
+    describe('PATCH requests', () => {
+        describe('PATCH /api/reviews/:review_id', () => {
+            test('Happy path', () => {
+                const patchSend = {inc_votes: 10}
+                
+                return request(app).patch('/api/reviews/2')
+                .expect(200)
+                .send(patchSend)
+                .then(({body}) => {
+                    expect(body).toEqual({
+                        review_id: 2,
+                        title: 'Jenga',
+                        designer: 'Leslie Scott',
+                        owner: 'philippaclaire9',
+                        review_img_url:
+                          'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+                        review_body: 'Fiddly fun for all the family',
+                        category: 'dexterity',
+                        created_at: "2021-01-18T10:01:41.251Z",
+                        votes: 15
+                      }) 
+                })
+            })
+            test('Body missing inc_votes', () => {
+                return request(app).patch('/api/reviews/2').expect(400).send({beans: "Oo yes please"}).then(({body}) => {
+                    expect(body.msg).toBe("Patch body must contain the number of incoming votes.")
+                })
+            })
+            test('inc_votes wrong data type', () => {
+                return request(app).patch('/api/reviews/2').expect(400).send({inc_votes: "eleven"}).then(({body}) => {
+                    expect(body.msg).toBe("Input of incorrect data type.")
+                })
+            })
+            test.only('Patch with a review_id that does not exist', () => {
+                const patchSend = {inc_votes: 20}
+                
+                return request(app).patch('/api/reviews/99')
+                .expect(404)
+                .send(patchSend)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Sorry, there is no review with that ID.")
+                })
+            })
+            test('Patch with a review_id of invalid data type', () => {
+                const patchSend = {inc_votes: 15}
+                
+                return request(app).patch('/api/reviews/ninetynine')
+                .expect(400)
+                .send(patchSend)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Input of incorrect data type.")
                 })
             })
         })
