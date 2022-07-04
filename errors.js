@@ -11,7 +11,7 @@ exports.customError = (err, req, res, next) => {
 exports.psqlError = (err, req, res, next) => {
     switch (err.code) {
         case '22P02':
-            res.status(400).send({msg: "Review ID of incorrect data type. Did you mean to enter an integer?"})
+            res.status(400).send({msg: "Input of incorrect data type."})
             break
         default:
             next(err)
