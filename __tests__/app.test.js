@@ -31,5 +31,39 @@ describe('/api/categories', () => {
                 })
             })
         })
+        describe('GET /api/reviews/:review_id', () => {
+            test('happy path', () => {
+                return request(app).get('/api/reviews/1').expect(200).then(({body}) => {
+                    expect(Array.isArray(body)).toBe(false)
+                    expect(typeof body).toBe('object')
+
+                    expect(Object.keys(body).length).toBe(9)
+
+                    expect(body).toEqual(
+                        expect.objectContaining({
+                            review_id: expect.any(Number),
+                            title: expect.any(String),
+                            review_body: expect.any(String),
+                            designer: expect.any(String),
+                            review_img_url: expect.any(String),
+                            votes: expect.any(Number),
+                            category: expect.any(String),
+                            owner: expect.any(String),
+                            created_at: expect.any(String)
+                        })
+                    )
+                })
+            })
+            test('Incorrect data type for review_id', () => {
+                return request(app).get('/api/reviews/beans').expect(400).then(({body}) => {
+                    expect(body.msg).toBe("Review ID of incorrect data type. Did you mean to enter an integer?")
+                })
+            })
+            test('Correct data type but the entry does not exist', () => {
+                return request(app).get('/api/reviews/99').expect(404).then(({body}) => {
+                    expect(body.msg).toBe("Sorry, there is no review with that ID.")
+                })
+            })
+        })
     })
 })
