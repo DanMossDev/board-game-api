@@ -12,12 +12,14 @@ exports.fetchReview = (review_id) => {
 }
 
 
-exports.updateReview = (review_id, votes) => {
+exports.updateReview = (review_id, votes = 0) => {
     return db.query(`
     SELECT votes FROM reviews
     WHERE review_id = $1
     `, [review_id])
     .then(({rows}) => {
+        if (!rows[0]) return Promise.reject({statusCode: 404, msg: 'Sorry, there is no review with that ID.'})
+        
         const currentVotes = rows[0].votes + votes
 
         return db.query(`

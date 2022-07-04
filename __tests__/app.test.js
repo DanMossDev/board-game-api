@@ -99,6 +99,26 @@ describe('/api/categories', () => {
                     expect(body.msg).toBe("Input of incorrect data type.")
                 })
             })
+            test.only('Patch with a review_id that does not exist', () => {
+                const patchSend = {inc_votes: 20}
+                
+                return request(app).patch('/api/reviews/99')
+                .expect(404)
+                .send(patchSend)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Sorry, there is no review with that ID.")
+                })
+            })
+            test('Patch with a review_id of invalid data type', () => {
+                const patchSend = {inc_votes: 15}
+                
+                return request(app).patch('/api/reviews/ninetynine')
+                .expect(400)
+                .send(patchSend)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Input of incorrect data type.")
+                })
+            })
         })
     })
 })
