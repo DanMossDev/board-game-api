@@ -64,5 +64,10 @@ describe('/api/categories', () => {
                 })
             })
         })
+        describe('GET /api/users', () => {
+            test('Happy path', () => {
+                
+            })
+        })
     })
 })

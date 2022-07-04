@@ -5,12 +5,16 @@ const { //CATEGORIES CONTROLLER
 const { //REVIEWS CONTROLLER
     getReview
 } = require('./controllers/reviewController')
+const {
+    getUsers
+} = require('./controllers/userController')
 
 const { //ERROR HANDLING
     badPath,
     psqlError,
     customError
 } = require('./errors')
+
 
 const app = express()
 
@@ -20,6 +24,8 @@ app.use(express.json())
 app.get('/api/categories', getCategories)
 
 app.get('/api/reviews/:review_id', getReview)
+
+app.get('/api/users', getUsers)
 
 
 //ERROR HANDLING
