@@ -4,6 +4,7 @@ const { //CATEGORIES CONTROLLER
 } = require('./controllers/categoryController')
 const { //REVIEWS CONTROLLER
     getReview,
+    getReviews,
     patchReview
 } = require('./controllers/reviewController')
 const {
@@ -23,6 +24,8 @@ app.use(express.json())
 
 //GET
 app.get('/api/categories', getCategories)
+
+app.get('/api/reviews', getReviews)
 
 app.get('/api/reviews/:review_id', getReview)
 

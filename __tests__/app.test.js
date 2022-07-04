@@ -65,6 +65,28 @@ describe('/api/categories', () => {
                 })
             })
         })
+        describe('GET /api/reviews', () => {
+            test('happy path', () => {
+                return request(app).get('/api/reviews').expect(200).then(({body}) => {
+                    expect(body.length).toBe(13)
+                    body.forEach(review => {
+                        expect(review).toEqual(expect.objectContaining({
+                            owner: expect.any(String),
+                            title: expect.any(String),
+                            review_id: expect.any(Number),
+                            category: expect.any(String),
+                            review_img_url: expect.any(String),
+                            created_at: expect.any(String),
+                            votes: expect.any(Number),
+                            review_body: expect.any(String),
+                            designer: expect.any(String),
+                            comment_count: expect.any(Number)
+                        }))
+                    })
+                    expect(body[4].comment_count).toBe(3)
+                })
+            })
+        })
         describe('GET /api/users', () => {
             test('Happy path', () => {
                 return request(app).get('/api/users').expect(200).then(({body}) => {
