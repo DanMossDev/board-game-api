@@ -27,7 +27,7 @@ app.get('/api/reviews/:review_id', getReview)
 app.patch('/api/reviews/:review_id', patchReview)
 
 //ERROR HANDLING
-app.use('*', badPath)
+app.all('*', badPath)
 
 app.use(customError)
 
