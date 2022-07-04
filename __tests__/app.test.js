@@ -31,5 +31,38 @@ describe('/api/categories', () => {
                 })
             })
         })
+        describe('GET /api/reviews/:review_id', () => {
+            test('happy path', () => {
+                return request(app).get('/api/reviews/1').expect(200).then(({body}) => {
+                    expect(Array.isArray(body)).toBe(false)
+                    expect(typeof body).toBe('object')
+
+                    expect(Object.keys(body).length).toBe(9)
+
+                    expect(body).toEqual({
+                        review_id: 1,
+                        title: 'Agricola',
+                        designer: 'Uwe Rosenberg',
+                        owner: 'mallionaire',
+                        review_img_url:
+                          'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+                        review_body: 'Farmyard fun!',
+                        category: 'euro game',
+                        created_at: "2021-01-18T10:00:20.514Z",
+                        votes: 1
+                    })
+                })
+            })
+            test('Incorrect data type for review_id', () => {
+                return request(app).get('/api/reviews/beans').expect(400).then(({body}) => {
+                    expect(body.msg).toBe("Review ID of incorrect data type. Did you mean to enter an integer?")
+                })
+            })
+            test('Correct data type but the entry does not exist', () => {
+                return request(app).get('/api/reviews/99').expect(404).then(({body}) => {
+                    expect(body.msg).toBe("Sorry, there is no review with that ID.")
+                })
+            })
+        })
     })
 })
