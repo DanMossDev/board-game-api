@@ -18,6 +18,7 @@ describe('/api/categories', () => {
             test('happy path', () => {
                 return request(app).get('/api/categories').expect(200).then(({body}) => {
                     expect(Array.isArray(body)).toBe(true)
+                    expect(body.length).not.toBe(0)
                     body.forEach(object => {
                         expect(object.hasOwnProperty('slug')).toBe(true)
                         expect(object.hasOwnProperty('description')).toBe(true)
