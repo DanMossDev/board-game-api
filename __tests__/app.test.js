@@ -67,7 +67,7 @@ describe('/api/categories', () => {
         describe('GET /api/reviews', () => {
             test('happy path', () => {
                 return request(app).get('/api/reviews').expect(200).then(({body}) => {
-                    expect(body.length).not.toBe(0)
+                    expect(body.length).toBe(13)
                     body.forEach(review => {
                         expect(review).toEqual(expect.objectContaining({
                             owner: expect.any(String),
