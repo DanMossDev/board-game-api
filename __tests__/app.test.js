@@ -65,6 +65,20 @@ describe('/api/categories', () => {
                 })
             })
         })
+        describe('GET /api/users', () => {
+            test('Happy path', () => {
+                return request(app).get('/api/users').expect(200).then(({body}) => {
+                    expect(body.length).toBe(4) 
+                    body.forEach(user => {
+                        expect(user).toEqual(expect.objectContaining({
+                            username: expect.any(String),
+                            name: expect.any(String),
+                            avatar_url: expect.any(String)
+                        }))
+                    })
+                })
+            })
+        })
     })
 
     describe('PATCH requests', () => {
