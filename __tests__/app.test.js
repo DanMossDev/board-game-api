@@ -37,7 +37,7 @@ describe('/api/categories', () => {
                     expect(Array.isArray(body)).toBe(false)
                     expect(typeof body).toBe('object')
 
-                    expect(Object.keys(body).length).toBe(9)
+                    expect(Object.keys(body).length).toBe(10)
 
                     expect(body).toEqual({
                         review_id: 1,
@@ -49,7 +49,8 @@ describe('/api/categories', () => {
                         review_body: 'Farmyard fun!',
                         category: 'euro game',
                         created_at: "2021-01-18T10:00:20.514Z",
-                        votes: 1
+                        votes: 1,
+                        comment_count: 0
                     })
                 })
             })
