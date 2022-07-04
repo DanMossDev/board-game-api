@@ -113,6 +113,11 @@ describe('/api/categories', () => {
                     expect(body.msg).toBe("Input of incorrect data type.")
                 })
             })
+            test('Review exists but there are no comments', () => {
+                return request(app).get('/api/reviews/1/comments').expect(404).then(({body}) => {
+                    expect(body.msg).toBe("Sorry, we couldn't find any comments on that review")
+                })
+            })
         })
         describe('GET /api/users', () => {
             test('Happy path', () => {
