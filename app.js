@@ -7,12 +7,16 @@ const { //REVIEWS CONTROLLER
     getReviews,
     patchReview
 } = require('./controllers/reviewController')
+const {
+    getUsers
+} = require('./controllers/userController')
 
 const { //ERROR HANDLING
     badPath,
     psqlError,
     customError
 } = require('./errors')
+
 
 const app = express()
 
@@ -24,6 +28,8 @@ app.get('/api/categories', getCategories)
 app.get('/api/reviews', getReviews)
 
 app.get('/api/reviews/:review_id', getReview)
+
+app.get('/api/users', getUsers)
 
 
 //PATCH
