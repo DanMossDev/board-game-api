@@ -89,7 +89,7 @@ describe('/api/categories', () => {
         })
         describe('GET /api/reviews/:review_id/comments', () => {
             test('Happy path', () => {
-                return request(app).get('/api/reviews/2/comments').expect(200).then(({body}) => {
+                return request(app).get('/api/reviews/4/comments').expect(200).then(({body}) => {
                     expect(body.length).toBe(3)
                     body.forEach(comment => {
                         expect(comment).toEqual(expect.objectContaining({
