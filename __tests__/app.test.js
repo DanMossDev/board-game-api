@@ -32,6 +32,30 @@ describe('/api/categories', () => {
                 })
             })
         })
+    })
+})
+
+describe('/api/users', () => {
+    describe('GET requests', () => {
+        describe('GET /api/users', () => {
+            test('Happy path', () => {
+                return request(app).get('/api/users').expect(200).then(({body}) => {
+                    expect(body.length).toBe(4) 
+                    body.forEach(user => {
+                        expect(user).toEqual(expect.objectContaining({
+                            username: expect.any(String),
+                            name: expect.any(String),
+                            avatar_url: expect.any(String)
+                        }))
+                    })
+                })
+            })
+        })
+    })
+})
+
+describe('/api/reviews', () => {
+    describe('GET requests', () => {
         describe('GET /api/reviews/:review_id', () => {
             test('happy path', () => {
                 return request(app).get('/api/reviews/1').expect(200).then(({body}) => {
@@ -125,52 +149,6 @@ describe('/api/categories', () => {
                 })
             })
         })
-        describe('GET /api/reviews/:review_id/comments', () => {
-            test('Happy path', () => {
-                return request(app).get('/api/reviews/2/comments').expect(200).then(({body}) => {
-                    expect(body.comments.length).toBe(3)
-                    body.comments.forEach(comment => {
-                        expect(comment).toEqual(expect.objectContaining({
-                            comment_id: expect.any(Number),
-                            votes: expect.any(Number),
-                            created_at: expect.any(String),
-                            author: expect.any(String),
-                            body: expect.any(String),
-                            review_id: expect.any(Number)
-                        }))
-                    })
-                })
-            })
-            test('Non existent review_id', () => {
-                return request(app).get('/api/reviews/99/comments').expect(404).then(({body}) => {
-                    expect(body.msg).toBe("Sorry, there is no review with that ID.")
-                })
-            })
-            test('Incorrect review_id type', () => {
-                return request(app).get('/api/reviews/twelve/comments').expect(400).then(({body}) => {
-                    expect(body.msg).toBe("Input of incorrect data type.")
-                })
-            })
-            test('Review exists but there are no comments', () => {
-                return request(app).get('/api/reviews/1/comments').expect(200).then(({body}) => {
-                    expect(body).toEqual({comments: []})
-                })
-            })
-        })
-        describe('GET /api/users', () => {
-            test('Happy path', () => {
-                return request(app).get('/api/users').expect(200).then(({body}) => {
-                    expect(body.length).toBe(4) 
-                    body.forEach(user => {
-                        expect(user).toEqual(expect.objectContaining({
-                            username: expect.any(String),
-                            name: expect.any(String),
-                            avatar_url: expect.any(String)
-                        }))
-                    })
-                })
-            })
-        })
     })
 
     describe('PATCH requests', () => {
@@ -223,6 +201,66 @@ describe('/api/categories', () => {
                 .expect(400)
                 .send(patchSend)
                 .then(({body}) => {
+                    expect(body.msg).toBe("Input of incorrect data type.")
+                })
+            })
+        })
+    })
+})
+
+
+describe('/api/comments', () => {
+    describe('GET requests', () => {
+        describe('GET /api/reviews/:review_id/comments', () => {
+            test('Happy path', () => {
+                return request(app).get('/api/reviews/2/comments').expect(200).then(({body}) => {
+                    expect(body.comments.length).toBe(3)
+                    body.comments.forEach(comment => {
+                        expect(comment).toEqual(expect.objectContaining({
+                            comment_id: expect.any(Number),
+                            votes: expect.any(Number),
+                            created_at: expect.any(String),
+                            author: expect.any(String),
+                            body: expect.any(String),
+                            review_id: expect.any(Number)
+                        }))
+                    })
+                })
+            })
+            test('Non existent review_id', () => {
+                return request(app).get('/api/reviews/99/comments').expect(404).then(({body}) => {
+                    expect(body.msg).toBe("Sorry, there is no review with that ID.")
+                })
+            })
+            test('Incorrect review_id type', () => {
+                return request(app).get('/api/reviews/twelve/comments').expect(400).then(({body}) => {
+                    expect(body.msg).toBe("Input of incorrect data type.")
+                })
+            })
+            test('Review exists but there are no comments', () => {
+                return request(app).get('/api/reviews/1/comments').expect(200).then(({body}) => {
+                    expect(body).toEqual({comments: []})
+                })
+            })
+        })
+    })
+
+    describe('DELETE requests', () => {
+        describe('DELETE /api/comments/:comment_id', () => {
+            test('Happy path', () => {
+                return request(app).delete('/api/comments/5').expect(204).then(() => {
+                    return request(app).get('/api/reviews/2/comments').expect(200).then(({body}) => {
+                        expect(body.comments.length).toBe(2)
+                    })
+                })
+            })
+            test('Valid id but the comment doesn\'t exist', () => {
+                return request(app).delete('/api/comments/99').expect(404).then(({body}) => {
+                    expect(body.msg).toBe("That comment doesn't exist")
+                })
+            })
+            test('Invalid id', () => {
+                return request(app).delete('/api/comments/yellow').expect(400).then(({body}) => {
                     expect(body.msg).toBe("Input of incorrect data type.")
                 })
             })
