@@ -1,5 +1,5 @@
 {
-  "name": "be-nc-games",
+  "name": "BeeGee API",
   "version": "1.0.0",
   "description": "bc-nc-games",
   "main": "index.js",
@@ -19,9 +19,9 @@
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/northcoders/be-nc-games/issues"
+    "url": "https://github.com/DanMossDev/board-game-api/issues"
   },
-  "homepage": "https://github.com/northcoders/be-nc-games#readme",
+  "homepage": "https://github.com/DanMossDev/board-game-api#readme",
   "dependencies": {
     "express": "^4.18.1",
     "husky": "^7.0.0",
