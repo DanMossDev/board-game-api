@@ -1,6 +1,7 @@
 const {
     fetchReviews,
     fetchReview,
+    fetchComments,
     updateReview
 } = require('../models/reviewModel')
 
@@ -9,6 +10,7 @@ exports.getReviews = (req, res, next) => {
     .then(reviews => {
         res.status(200).send(reviews)
     })
+    .catch(err => next(err))
 }
 
 exports.getReview = (req, res, next) => {
@@ -17,6 +19,16 @@ exports.getReview = (req, res, next) => {
     fetchReview(review_id)
     .then(review => {
         res.status(200).send(review)
+    })
+    .catch(err => next(err))
+}
+
+exports.getComments = (req, res, next) => {
+    const {review_id} = req.params
+
+    fetchComments(review_id)
+    .then(comments => {
+        res.status(200).send({comments})
     })
     .catch(err => next(err))
 }
@@ -30,5 +42,5 @@ exports.patchReview = (req, res, next) => {
     .then(review => {
         res.status(200).send(review)
     })
-    .catch(err =>  next(err))
+    .catch(err => next(err))
 }

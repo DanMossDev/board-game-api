@@ -1,4 +1,5 @@
 const db = require('../db/connection')
+const {createRef} = require('../db/seeds/utils')
 
 exports.fetchReviews = () => {
     return db.query(`
@@ -24,6 +25,20 @@ exports.fetchReview = (review_id) => {
     })
 }
 
+exports.fetchComments = (review_id) => {
+    return db.query(`
+    SELECT * FROM reviews
+    WHERE review_id = $1
+    `, [review_id])
+    .then(({rows}) => {
+        if (!rows[0]) return Promise.reject({statusCode: 404, msg: 'Sorry, there is no review with that ID.'})
+        return db.query(`
+        SELECT * FROM comments
+        WHERE review_id = $1
+        `, [review_id])
+    })
+    .then(({rows}) =>  rows)
+}
 
 exports.updateReview = (review_id, votes = 0) => {
     return db.query(`

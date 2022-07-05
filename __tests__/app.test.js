@@ -87,6 +87,38 @@ describe('/api/categories', () => {
                 })
             })
         })
+        describe('GET /api/reviews/:review_id/comments', () => {
+            test('Happy path', () => {
+                return request(app).get('/api/reviews/2/comments').expect(200).then(({body}) => {
+                    expect(body.comments.length).toBe(3)
+                    body.comments.forEach(comment => {
+                        expect(comment).toEqual(expect.objectContaining({
+                            comment_id: expect.any(Number),
+                            votes: expect.any(Number),
+                            created_at: expect.any(String),
+                            author: expect.any(String),
+                            body: expect.any(String),
+                            review_id: expect.any(Number)
+                        }))
+                    })
+                })
+            })
+            test('Non existent review_id', () => {
+                return request(app).get('/api/reviews/99/comments').expect(404).then(({body}) => {
+                    expect(body.msg).toBe("Sorry, there is no review with that ID.")
+                })
+            })
+            test('Incorrect review_id type', () => {
+                return request(app).get('/api/reviews/twelve/comments').expect(400).then(({body}) => {
+                    expect(body.msg).toBe("Input of incorrect data type.")
+                })
+            })
+            test('Review exists but there are no comments', () => {
+                return request(app).get('/api/reviews/1/comments').expect(200).then(({body}) => {
+                    expect(body).toEqual({comments: []})
+                })
+            })
+        })
         describe('GET /api/users', () => {
             test('Happy path', () => {
                 return request(app).get('/api/users').expect(200).then(({body}) => {
