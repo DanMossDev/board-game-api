@@ -3,6 +3,7 @@ const db = require('../db/connection')
 const seed = require('../db/seeds/seed')
 const testData = require('../db/data/test-data/index')
 const request = require('supertest')
+require('jest-sorted')
 
 beforeEach(() => {
     return seed(testData)
@@ -84,6 +85,43 @@ describe('/api/categories', () => {
                         }))
                     })
                     expect(body[4].comment_count).toBe(3)
+                })
+            })
+            test('Optional parameters - sort_by', () => {
+                return request(app).get('/api/reviews?sort_by=votes').expect(200).then(({body}) => {
+                    expect(body).toBeSortedBy('votes', {descending: true})
+                })
+            })
+            test('Optional parameters - order', () => {
+                return request(app).get('/api/reviews?order=asc').expect(200).then(({body}) => {
+                    expect(body).toBeSortedBy('created_at')
+                })
+            })
+            test('Optional parameters - category', () => {
+                return request(app).get('/api/reviews?category=euro%20game').expect(200).then(({body}) => {
+                    body.forEach(game => {
+                        expect(game.category).toBe('euro game')
+                    })
+                })
+            })
+            test('Optional parameters - sort_by - invalid input', () => {
+                return request(app).get('/api/reviews?sort_by=beans').expect(400).then(({body}) => {
+                    expect(body.msg).toBe("Invalid sort_by; please refer to documentation.")
+                })
+            })
+            test('Optional parameters - order - invalid input', () => {
+                return request(app).get('/api/reviews?order=yes').expect(400).then(({body}) => {
+                    expect(body.msg).toBe("Results must be ordered by ASC or DESC")
+                })
+            })
+            test('Optional parameters - order - invalid but possible input', () => {
+                return request(app).get('/api/reviews?category=funnygames').expect(200).then(({body}) => {
+                    expect(body.length).toBe(0)
+                })
+            })
+            test('Optional parameters - default case', () => {
+                return request(app).get('/api/reviews').expect(200).then(({body}) => {
+                    expect(body).toBeSortedBy('created_at', {descending: true})
                 })
             })
         })
