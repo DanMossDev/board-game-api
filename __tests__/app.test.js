@@ -3,6 +3,7 @@ const db = require('../db/connection')
 const seed = require('../db/seeds/seed')
 const testData = require('../db/data/test-data/index')
 const request = require('supertest')
+require('jest-sorted')
 
 beforeEach(() => {
     return seed(testData)
@@ -31,6 +32,11 @@ describe('/api/categories', () => {
                 })
             })
         })
+    })
+})
+
+describe('/api/users', () => {
+    describe('GET requests', () => {
         describe('GET /api/users', () => {
             test('Happy path', () => {
                 return request(app).get('/api/users').expect(200).then(({body}) => {
@@ -103,6 +109,43 @@ describe('/api/reviews', () => {
                         }))
                     })
                     expect(body[4].comment_count).toBe(3)
+                })
+            })
+            test('Optional parameters - sort_by', () => {
+                return request(app).get('/api/reviews?sort_by=votes').expect(200).then(({body}) => {
+                    expect(body).toBeSortedBy('votes', {descending: true})
+                })
+            })
+            test('Optional parameters - order', () => {
+                return request(app).get('/api/reviews?order=asc').expect(200).then(({body}) => {
+                    expect(body).toBeSortedBy('created_at')
+                })
+            })
+            test('Optional parameters - category', () => {
+                return request(app).get('/api/reviews?category=euro%20game').expect(200).then(({body}) => {
+                    body.forEach(game => {
+                        expect(game.category).toBe('euro game')
+                    })
+                })
+            })
+            test('Optional parameters - sort_by - invalid input', () => {
+                return request(app).get('/api/reviews?sort_by=beans').expect(400).then(({body}) => {
+                    expect(body.msg).toBe("Invalid sort_by; please refer to documentation.")
+                })
+            })
+            test('Optional parameters - order - invalid input', () => {
+                return request(app).get('/api/reviews?order=yes').expect(400).then(({body}) => {
+                    expect(body.msg).toBe("Results must be ordered by ASC or DESC")
+                })
+            })
+            test('Optional parameters - order - invalid but possible input', () => {
+                return request(app).get('/api/reviews?category=funnygames').expect(200).then(({body}) => {
+                    expect(body.length).toBe(0)
+                })
+            })
+            test('Optional parameters - default case', () => {
+                return request(app).get('/api/reviews').expect(200).then(({body}) => {
+                    expect(body).toBeSortedBy('created_at', {descending: true})
                 })
             })
         })
@@ -202,17 +245,17 @@ describe('/api/comments', () => {
         })
     })
 
-    describe('DELETE requests', () => {
-        describe('DELETE /api/comments/:comment_id', () => {
-            test('Happy path', () => {
-                return request(app).delete('/api/comments/5').expect(204).then(() => {
-                    return request(app).get('/api/reviews/2/comments').expect(200).then(({body}) => {
-                        expect(body.comments.length).toBe(2)
-                    })
-                })
-            })
-        })
-    })
+    // describe('DELETE requests', () => {
+    //     describe('DELETE /api/comments/:comment_id', () => {
+    //         test('Happy path', () => {
+    //             return request(app).delete('/api/comments/5').expect(204).then(() => {
+    //                 return request(app).get('/api/reviews/2/comments').expect(200).then(({body}) => {
+    //                     expect(body.comments.length).toBe(2)
+    //                 })
+    //             })
+    //         })
+    //     })
+    // })
 
     describe('POST requests', () => {
         describe('POST /api/reviews/:review_id/comments', () => {
@@ -227,6 +270,36 @@ describe('/api/comments', () => {
                         body: "Yes it certainly is one of the games ever",
                         review_id: 1
                     })
+                })
+            })
+            test('Incorrectly formatted POST body', () => {
+                const postedComment = {beans: "Yes, lots", really: "Really really"}
+                return request(app).post('/api/reviews/1/comments').expect(400).send(postedComment).then(({body}) => {
+                    expect(body.msg).toBe("Patch body must contain a username and body text for the comment")
+                })
+            })
+            test('Empty POST body', () => {
+                const postedComment = {}
+                return request(app).post('/api/reviews/1/comments').expect(400).send(postedComment).then(({body}) => {
+                    expect(body.msg).toBe("Patch body must contain a username and body text for the comment")
+                })
+            })
+            test('Valid but non existent review_id', () => {
+                const postedComment = {username: "bainesface", body: "Yes it certainly is one of the games ever"}
+                return request(app).post('/api/reviews/99/comments').expect(404).send(postedComment).then(({body}) => {
+                    expect(body.msg).toBe('Key (review_id)=(99) is not present in table "reviews".')
+                })
+            })
+            test('Valid username but non existent user', () => {
+                const postedComment = {username: "moss123", body: "Yes it certainly is one of the games ever"}
+                return request(app).post('/api/reviews/2/comments').expect(404).send(postedComment).then(({body}) => {
+                    expect(body.msg).toBe('Key (author)=(moss123) is not present in table "users".')
+                })
+            })
+            test('Invalid review_id', () => {
+                const postedComment = {username: "bainesface", body: "Yes it certainly is one of the games ever"}
+                return request(app).post('/api/reviews/seven/comments').expect(400).send(postedComment).then(({body}) => {
+                    expect(body.msg).toBe("Input of incorrect data type.")
                 })
             })
         })
