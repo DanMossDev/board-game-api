@@ -5,13 +5,16 @@ const { //CATEGORIES CONTROLLER
 const { //REVIEWS CONTROLLER
     getReview,
     getReviews,
-    postComment,
-    getComments,
     patchReview
 } = require('./controllers/reviewController')
-const {
+const { //USERS CONTROLLER
     getUsers
 } = require('./controllers/userController')
+const { //COMMENTS CONTROLLER
+    getComments,
+    postComment,
+    deleteComment
+} = require('./controllers/commentController')
 
 const { //ERROR HANDLING
     badPath,
@@ -42,6 +45,11 @@ app.patch('/api/reviews/:review_id', patchReview)
 
 //POST
 app.post('/api/reviews/:review_id/comments', postComment)
+
+
+//DELETE
+app.delete('/api/comments/:comment_id', deleteComment)
+
 
 //ERROR HANDLING
 app.all('*', badPath)
