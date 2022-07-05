@@ -90,8 +90,8 @@ describe('/api/categories', () => {
         describe('GET /api/reviews/:review_id/comments', () => {
             test('Happy path', () => {
                 return request(app).get('/api/reviews/2/comments').expect(200).then(({body}) => {
-                    expect(body.length).toBe(3)
-                    body.forEach(comment => {
+                    expect(body.comments.length).toBe(3)
+                    body.comments.forEach(comment => {
                         expect(comment).toEqual(expect.objectContaining({
                             comment_id: expect.any(Number),
                             votes: expect.any(Number),
@@ -114,8 +114,8 @@ describe('/api/categories', () => {
                 })
             })
             test('Review exists but there are no comments', () => {
-                return request(app).get('/api/reviews/1/comments').expect(404).then(({body}) => {
-                    expect(body.msg).toBe("Sorry, we couldn't find any comments on that review")
+                return request(app).get('/api/reviews/1/comments').expect(200).then(({body}) => {
+                    expect(body).toEqual({comments: []})
                 })
             })
         })

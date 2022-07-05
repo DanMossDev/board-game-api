@@ -37,10 +37,7 @@ exports.fetchComments = (review_id) => {
         WHERE review_id = $1
         `, [review_id])
     })
-    .then(({rows}) => {
-        if (!rows[0]) return Promise.reject({statusCode: 404, msg: "Sorry, we couldn't find any comments on that review"})
-        else return rows
-    })
+    .then(({rows}) =>  rows)
 }
 
 exports.updateReview = (review_id, votes = 0) => {
