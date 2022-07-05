@@ -105,18 +105,23 @@ describe('/api/categories', () => {
                 })
             })
             test('Optional parameters - sort_by - invalid input', () => {
-                return request(app).get('/api/reviews?sort_by=beans').expect(200).then(({body}) => {
-                    expect(body).toBeSortedBy('created_at', {descending: true})
+                return request(app).get('/api/reviews?sort_by=beans').expect(400).then(({body}) => {
+                    expect(body.msg).toBe("Invalid sort_by; please refer to documentation.")
                 })
             })
             test('Optional parameters - order - invalid input', () => {
-                return request(app).get('/api/reviews?order=yes').expect(200).then(({body}) => {
-                    expect(body).toBeSortedBy('created_at', {descending: true})
+                return request(app).get('/api/reviews?order=yes').expect(400).then(({body}) => {
+                    expect(body.msg).toBe("Results must be ordered by ASC or DESC")
                 })
             })
             test('Optional parameters - order - invalid but possible input', () => {
                 return request(app).get('/api/reviews?category=funnygames').expect(200).then(({body}) => {
                     expect(body.length).toBe(0)
+                })
+            })
+            test('Optional parameters - default case', () => {
+                return request(app).get('/api/reviews').expect(200).then(({body}) => {
+                    expect(body).toBeSortedBy('created_at', {descending: true})
                 })
             })
         })

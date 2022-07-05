@@ -2,10 +2,10 @@ const db = require('../db/connection')
 const {createRef} = require('../db/seeds/utils')
 
 exports.fetchReviews = (sort_by = 'created_at', order = 'DESC', category) => {
-    const validSorts = ['review_id', 'title', 'category', 'designer', 'owner', 'review_body', 'review_img_url', 'create_at', 'votes']
+    const validSorts = ['review_id', 'title', 'category', 'designer', 'owner', 'review_body', 'review_img_url', 'created_at', 'votes']
     const queries = []
     
-    if (validSorts.indexOf(sort_by) === -1) sort_by = 'created_at'
+    if (validSorts.indexOf(`${sort_by}`) === -1) return Promise.reject({statusCode: 400, msg: "Invalid sort_by; please refer to documentation."})
     
     
     let query = `
@@ -20,10 +20,17 @@ exports.fetchReviews = (sort_by = 'created_at', order = 'DESC', category) => {
     query += `
     GROUP BY reviews.review_id
     ORDER BY reviews.${sort_by} `
-
-    if (order.toUpperCase() === 'ASC') query += 'ASC'
-    else query += 'DESC'
-    
+    order = order.toUpperCase()
+    switch (order) {
+        case 'ASC': 
+            query += 'ASC'
+            break
+        case 'DESC':
+            query += 'DESC'
+            break
+        default:
+            return Promise.reject({statusCode: 400, msg: "Results must be ordered by ASC or DESC"})
+    }
     return db.query(query, queries)
     .then(({rows}) => rows)
 }
