@@ -1,4 +1,4 @@
-# <center> Northcoders House of Games API </center>
+# <center> BeeGee (Board Games) API </center>
 
 ### <center> https://beegee-api.herokuapp.com/ </center>
 
