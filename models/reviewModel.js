@@ -60,7 +60,6 @@ exports.updateReview = (review_id, votes = 0) => {
 }
 
 exports.addComment = (review_id, author, body) => {
-    console.log(review_id)
     return db.query(`
     INSERT INTO comments
     (author, body, review_id)
