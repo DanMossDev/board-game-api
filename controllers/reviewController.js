@@ -1,7 +1,6 @@
 const {
     fetchReviews,
     fetchReview,
-    updateReview,
     addComment,
     fetchComments,
     updateReview

@@ -5,7 +5,6 @@ const { //CATEGORIES CONTROLLER
 const { //REVIEWS CONTROLLER
     getReview,
     getReviews,
-    patchReview,
     postComment,
     getComments,
     patchReview
