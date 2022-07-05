@@ -3,6 +3,7 @@ const db = require('../db/connection')
 const seed = require('../db/seeds/seed')
 const testData = require('../db/data/test-data/index')
 const request = require('supertest')
+const fs = require('fs')
 require('jest-sorted')
 
 beforeEach(() => {
@@ -11,6 +12,15 @@ beforeEach(() => {
 
 afterAll(() => {
     db.end()
+})
+
+describe('/api', () => {
+    test('GET /api', () => {
+        return request(app).get('/api').expect(200).then((body) => {
+            const endpoints = fs.readFileSync(`${__dirname}/../endpoints.json`, "utf-8")
+            expect(body.text).toEqual(endpoints)
+        })
+    })
 })
 
 describe('/api/categories', () => {

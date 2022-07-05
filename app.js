@@ -1,4 +1,5 @@
 const express = require('express')
+const fs = require('fs/promises')
 const { //CATEGORIES CONTROLLER
     getCategories,
 } = require('./controllers/categoryController')
@@ -28,6 +29,13 @@ const app = express()
 app.use(express.json())
 
 //GET
+app.get('/api', async (req, res, next) => {
+    try {
+    const endpoints = await fs.readFile(`${__dirname}/endpoints.json`, "utf-8")
+    res.status(200).send(endpoints)
+    } catch (err) { next(err) }
+})
+
 app.get('/api/categories', getCategories)
 
 app.get('/api/reviews', getReviews)
