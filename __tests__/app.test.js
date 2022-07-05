@@ -212,10 +212,22 @@ describe('/api/categories', () => {
                     expect(body.msg).toBe("Patch body must contain a username and body text for the comment")
                 })
             })
+            test('Empty POST body', () => {
+                const postedComment = {}
+                return request(app).post('/api/reviews/1/comments').expect(400).send(postedComment).then(({body}) => {
+                    expect(body.msg).toBe("Patch body must contain a username and body text for the comment")
+                })
+            })
             test('Valid but non existent review_id', () => {
                 const postedComment = {username: "bainesface", body: "Yes it certainly is one of the games ever"}
                 return request(app).post('/api/reviews/99/comments').expect(404).send(postedComment).then(({body}) => {
                     expect(body.msg).toBe('Key (review_id)=(99) is not present in table "reviews".')
+                })
+            })
+            test('Valid username but non existent user', () => {
+                const postedComment = {username: "moss123", body: "Yes it certainly is one of the games ever"}
+                return request(app).post('/api/reviews/2/comments').expect(404).send(postedComment).then(({body}) => {
+                    expect(body.msg).toBe('Key (author)=(moss123) is not present in table "users".')
                 })
             })
             test('Invalid review_id', () => {
