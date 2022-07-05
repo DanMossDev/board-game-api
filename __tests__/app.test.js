@@ -245,17 +245,27 @@ describe('/api/comments', () => {
         })
     })
 
-    // describe('DELETE requests', () => {
-    //     describe('DELETE /api/comments/:comment_id', () => {
-    //         test('Happy path', () => {
-    //             return request(app).delete('/api/comments/5').expect(204).then(() => {
-    //                 return request(app).get('/api/reviews/2/comments').expect(200).then(({body}) => {
-    //                     expect(body.comments.length).toBe(2)
-    //                 })
-    //             })
-    //         })
-    //     })
-    // })
+    describe('DELETE requests', () => {
+        describe('DELETE /api/comments/:comment_id', () => {
+            test('Happy path', () => {
+                return request(app).delete('/api/comments/5').expect(204).then(() => {
+                    return request(app).get('/api/reviews/2/comments').expect(200).then(({body}) => {
+                        expect(body.comments.length).toBe(2)
+                    })
+                })
+            })
+            test('Valid id but the comment doesn\'t exist', () => {
+                return request(app).delete('/api/comments/99').expect(404).then(({body}) => {
+                    expect(body.msg).toBe("That comment doesn't exist")
+                })
+            })
+            test('Invalid id', () => {
+                return request(app).delete('/api/comments/yellow').expect(400).then(({body}) => {
+                    expect(body.msg).toBe("Input of incorrect data type.")
+                })
+            })
+        })
+    })
 
     describe('POST requests', () => {
         describe('POST /api/reviews/:review_id/comments', () => {

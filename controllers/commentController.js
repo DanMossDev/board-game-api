@@ -29,9 +29,10 @@ exports.postComment = (req, res, next) => {
 
 exports.deleteComment = async (req, res, next) => {
     const {comment_id} = req.params
+
     try {
     await removeComment(comment_id)
     res.status(204).send()
     }
-    catch(err) {console.log(err)}
+    catch(err) {next(err)}
 }

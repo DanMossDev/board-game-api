@@ -18,7 +18,6 @@ exports.fetchComments = (review_id) => {
 
 
 exports.addComment = (review_id, author, body) => {
-    console.log(review_id)
     return db.query(`
     INSERT INTO comments
     (author, body, review_id)
@@ -34,5 +33,9 @@ exports.removeComment = (comment_id) => {
     return db.query(`
     DELETE FROM comments
     WHERE comment_id = $1
-    ` [comment_id])
+    `, [comment_id]).then(({rowCount}) => {
+        if (rowCount === 0) return Promise.reject({statusCode: 404, msg: "That comment doesn't exist"})
+        
+        return
+    })
 }
