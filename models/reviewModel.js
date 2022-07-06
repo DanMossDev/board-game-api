@@ -67,6 +67,27 @@ exports.updateReview = (review_id, votes) => {
     .then(({rows}) => rows[0])
 }
 
+exports.addReview = ({title, category, designer, owner, review_body}) => {
+    return db.query(`
+    INSERT INTO reviews
+    (title, category, designer, owner, review_body)
+    VALUES
+    ($1, $2, $3, $4, $5)
+    RETURNING *
+    `, [title, category, designer, owner, review_body])
+    .then(({rows}) => {
+        const {review_id} = rows[0]
+
+        return db.query(`
+        SELECT reviews.*, COUNT(comments.review_id)::INT AS comment_count FROM reviews
+        LEFT JOIN comments ON reviews.review_id = comments.review_id
+        WHERE reviews.review_id = $1
+        GROUP BY reviews.review_id
+        `, [review_id])
+    })
+    .then(({rows}) => rows[0])
+}
+
 exports.fetchComments = (review_id) => {
     return db.query(`
     SELECT * FROM reviews

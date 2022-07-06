@@ -18,7 +18,7 @@ exports.psqlError = (err, req, res, next) => {
             res.status(404).send({msg: err.detail})
             break
         case '23502':
-            //error is handled in custom errors
+            //
             break
         default:
             next(err)

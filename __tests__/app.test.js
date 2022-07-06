@@ -234,6 +234,55 @@ describe('/api/reviews', () => {
             })
         })
     })
+
+    describe('POST requests', () => {
+        describe('POST /api/reviews', () => {
+            test('Happy path', () => {
+                return request(app).post('/api/reviews').expect(201)
+                .send({
+                    "title": "Occaecat consequat officia in quis commodo.",
+                    "designer": "Ollie Tabooger",
+                    "owner": "mallionaire",
+                    "review_body": "Lorem ipsum has never been so lorem ip-fun!",
+                    "category": 'euro game',
+                  }).then(({body}) => {
+                    expect(body).toEqual({
+                        "review_id": expect.any(Number),
+                        "title": "Occaecat consequat officia in quis commodo.",
+                        "designer": "Ollie Tabooger",
+                        "owner": "mallionaire",
+                        "review_img_url":
+                        "https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg",
+                        "review_body": "Lorem ipsum has never been so lorem ip-fun!",
+                        "category": "euro game",
+                        "created_at": expect.any(String),
+                        "votes": 0,
+                        "comment_count": 0
+                      })
+                  })
+            })
+            test('Invalid request body', () => {
+                return request(app).post('/api/reviews').expect(400)
+                .send({
+                    Oh: 'Hello there'
+                  }).then(({body}) => {
+                    expect(body.msg).toBe("Patch body must contain title, owner, designer, category, and review_body properties")
+                  })
+            })
+            test('Request body has invalid inputs for owner/category', () => {
+                return request(app).post('/api/reviews').expect(404)
+                .send({
+                    "title": "Occaecat consequat officia in quis commodo.",
+                    "designer": "Ollie Tabooger",
+                    "owner": "me",
+                    "review_body": "Lorem ipsum has never been so lorem ip-fun!",
+                    "category": 'yes',
+                  }).then(({body}) => {
+                    expect(body.msg).toBe('Key (category)=(yes) is not present in table "categories".')
+                  })
+            })
+        })
+    })
 })
 
 

@@ -3,6 +3,7 @@ const { //REVIEWS CONTROLLER
     getReview,
     getReviews,
     patchReview,
+    postReview,
     getComments,
     postComment
 } = require('../controllers/reviewController')
@@ -12,6 +13,7 @@ const router = express.Router();
 router
     .route('')
     .get(getReviews)
+    .post(postReview)
 
 router
     .route('/:review_id')
