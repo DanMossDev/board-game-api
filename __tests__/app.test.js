@@ -43,6 +43,39 @@ describe('/api/categories', () => {
             })
         })
     })
+    describe('POST request', () => {
+        describe('POST /api/categories', () => {
+            test('Happy path', () => {
+                return request(app).post('/api/categories').expect(201)
+                .send({
+                    slug: "roleplaying",
+                    description: "Games with traditional RPG elements, such as gaining XP, combat, and trade with NPCs and other players"
+                }).then(({body}) => {
+                    expect(body).toEqual({
+                        slug: "roleplaying",
+                        description: "Games with traditional RPG elements, such as gaining XP, combat, and trade with NPCs and other players"
+                    })
+                })
+            })
+            test('Incorrect post body', () => {
+                return request(app).post('/api/categories').expect(400)
+                .send({
+                    iya: 'hi'
+                }).then(({body}) => {
+                    expect(body.msg).toBe("The post body must include slug and description properties")
+                })
+            })
+            test('slug is already stored in the database', () => {
+                return request(app).post('/api/categories').expect(409)
+                .send({
+                    slug: "euro game",
+                        description: "Games about Europe?"
+                }).then(({body}) => {
+                    expect(body.msg).toBe("That slug already has a database entry")
+                })
+            })
+        })
+    })
 })
 
 describe('/api/users', () => {
