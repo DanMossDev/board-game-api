@@ -21,6 +21,7 @@ app.use('/api', router)
 //DEFAULTS
 app.get('/', root)
 
+
 //ERROR HANDLING
 app.all('*', badPath)
 

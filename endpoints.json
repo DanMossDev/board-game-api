@@ -66,6 +66,16 @@
       "votes": 15
     }]
   },
+  "GET /api/users/:username": {
+    "description": "serves a user object",
+    "queries": [],
+    "exampleResponse": {
+      "username": "dav3rid",
+      "name": "dave",
+      "avatar_url":
+        "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
+    }
+  },
   "GET /api/reviews/:review_id/comments": {
     "description": "serves all comments on a single review",
     "queries": [],
