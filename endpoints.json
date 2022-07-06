@@ -153,6 +153,11 @@
       "created_at": "2021-01-18T10:09:05.410Z"
     }
   },
+  "DELETE /api/reviews/:review_id": {
+    "description": "Removes a specific review, and all associated comments, from the database",
+    "queries": [],
+    "exampleResponse": "204, no response"
+  },
   "DELETE /api/comments/:comment_id": {
     "description": "Removes a specific comment from the database",
     "queries": [],

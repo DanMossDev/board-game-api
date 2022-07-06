@@ -92,6 +92,16 @@ exports.addReview = ({title, category, designer, owner, review_body}) => {
     .then(({rows}) => rows[0])
 }
 
+exports.removeReview = (review_id) => {
+    return db.query(`
+    DELETE FROM reviews
+    WHERE review_id = $1
+    RETURNING *`, [review_id]).then(({rowCount}) => {
+        if (rowCount === 0) return Promise.reject({statusCode: 404, msg: "Sorry, there is no review with that ID."})
+        else return
+    })
+}
+
 exports.fetchComments = async (review_id, limit = 10, p = 1) => {
     const reviewsArr = await db.query(`SELECT * FROM reviews WHERE review_id = $1`, [review_id])
     const commentsArr = await db.query(`SELECT COUNT(*)::INT AS total_count FROM comments`)
