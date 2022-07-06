@@ -119,8 +119,8 @@ describe('/api/reviews', () => {
             })
         })
         describe('GET /api/reviews', () => {
-            test('happy path', () => {
-                return request(app).get('/api/reviews').expect(200).then(({body}) => {
+            test('happy path (inc high limit param due to implementation of pagination', () => {
+                return request(app).get('/api/reviews?limit=9999').expect(200).then(({body}) => {
                     expect(body.length).toBe(13)
                     body.forEach(review => {
                         expect(review).toEqual(expect.objectContaining({
@@ -156,6 +156,28 @@ describe('/api/reviews', () => {
                     })
                 })
             })
+            test('Optional parameters - limit', () => {
+                return request(app).get('/api/reviews?limit=5').expect(200).then(({body}) => {
+                    expect(body.length).toBe(5)
+                })
+            })
+            test('Optional parameters - p', () => {
+                return request(app).get('/api/reviews?limit=5&p=2').expect(200).then(({body}) => {
+                    expect(body[0]).toEqual({
+                        review_id: 2,
+                        title: 'Jenga',
+                        category: 'dexterity',
+                        designer: 'Leslie Scott',
+                        owner: 'philippaclaire9',
+                        review_body: 'Fiddly fun for all the family',
+                        review_img_url: 'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+                        created_at: '2021-01-18T10:01:41.251Z',
+                        votes: 5,
+                        total_count: 13,
+                        comment_count: 3
+                    })
+                })
+            })
             test('Optional parameters - sort_by - invalid input', () => {
                 return request(app).get('/api/reviews?sort_by=beans').expect(400).then(({body}) => {
                     expect(body.msg).toBe("Invalid sort_by; please refer to documentation.")
@@ -174,6 +196,22 @@ describe('/api/reviews', () => {
             test('Optional parameters - default case', () => {
                 return request(app).get('/api/reviews').expect(200).then(({body}) => {
                     expect(body).toBeSortedBy('created_at', {descending: true})
+                    expect(body.length).toBe(10)
+                })
+            })
+            test('Optional parameters - limit - invalid input', () => {
+                return request(app).get('/api/reviews?limit=beans').expect(400).then(({body}) => {
+                    expect(body.msg).toBe("Input of incorrect data type.")
+                })
+            })
+            test('Optional parameters - p - invalid input', () => {
+                return request(app).get('/api/reviews?p=beans').expect(400).then(({body}) => {
+                    expect(body.msg).toBe("Input of incorrect data type.")
+                })
+            })
+            test('Optional parameters - p - nonexistent page', () => {
+                return request(app).get('/api/reviews?p=99').expect(404).then(({body}) => {
+                    expect(body.msg).toBe(`There are not enough results to have a page 99`)
                 })
             })
         })
