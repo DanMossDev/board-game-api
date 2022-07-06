@@ -48,7 +48,7 @@ exports.fetchReview = (review_id) => {
     })
 }
 
-exports.updateReview = (review_id, votes = 0) => {
+exports.updateReview = (review_id, votes) => {
     return db.query(`
     SELECT votes FROM reviews
     WHERE review_id = $1
