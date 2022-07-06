@@ -47,8 +47,9 @@ exports.postReview = async (req, res, next) => {
 
 exports.getComments = async (req, res, next) => {
     const {review_id} = req.params
+    const {limit, p} = req.query
     try {
-    const comments = await fetchComments(review_id)
+    const comments = await fetchComments(review_id, limit, p)
     res.status(200).send({comments})
     } catch (err) { next(err) }
 }

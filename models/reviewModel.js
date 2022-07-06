@@ -1,12 +1,15 @@
 const db = require('../db/connection')
 const {createRef} = require('../db/seeds/utils')
 
-exports.fetchReviews = (sort_by = 'created_at', order = 'DESC', category, limit = 10, p = 1) => {
+exports.fetchReviews = async (sort_by = 'created_at', order = 'DESC', category, limit = 10, p = 1) => {
     const validSorts = ['review_id', 'title', 'category', 'designer', 'owner', 'review_body', 'review_img_url', 'created_at', 'votes']
     const queries = [limit, limit * (p - 1)]
     
     if (validSorts.indexOf(`${sort_by}`) === -1) return Promise.reject({statusCode: 400, msg: "Invalid sort_by; please refer to documentation."})
     
+    const returnArr = await db.query(`SELECT COUNT(*)::INT AS total_count FROM reviews`)
+    const {total_count} = returnArr.rows[0]
+    if (limit * (p) > total_count && p !== 1) return Promise.reject({statusCode: 404, msg: `There are not enough results to have a page ${p}`})
     
     let query = `
     SELECT reviews.*, COUNT(comments.review_id)::INT AS comment_count, COUNT(*) OVER()::INT AS total_count FROM reviews
@@ -33,15 +36,7 @@ exports.fetchReviews = (sort_by = 'created_at', order = 'DESC', category, limit 
     }
     query += ' LIMIT $1 OFFSET $2'
     return db.query(query, queries)
-    .then(({rows}) => {
-        if (rows.length > 0) return rows
-
-        return db.query(`SELECT COUNT(*)::INT AS total_count FROM reviews`)
-        .then(({rows}) => {
-            if (limit * (p) > rows[0]?.total_count) return Promise.reject({statusCode: 404, msg: `There are not enough results to have a page ${p}`})
-            else return []
-        })
-    })
+    .then(({rows}) => rows)
 }
 
 exports.fetchReview = (review_id) => {
@@ -97,19 +92,19 @@ exports.addReview = ({title, category, designer, owner, review_body}) => {
     .then(({rows}) => rows[0])
 }
 
-exports.fetchComments = (review_id) => {
+exports.fetchComments = async (review_id, limit = 10, p = 1) => {
+    const reviewsArr = await db.query(`SELECT * FROM reviews WHERE review_id = $1`, [review_id])
+    const commentsArr = await db.query(`SELECT COUNT(*)::INT AS total_count FROM comments`)
+    const {total_count} = commentsArr.rows[0]
+    if (!reviewsArr.rows[0]) return Promise.reject({statusCode: 404, msg: 'Sorry, there is no review with that ID.'})
+    if (limit * (p) > total_count && p !== 1) return Promise.reject({statusCode: 404, msg: `There are not enough results to have a page ${p}`})
+    
     return db.query(`
-    SELECT * FROM reviews
-    WHERE review_id = $1
-    `, [review_id])
-    .then(({rows}) => {
-        if (!rows[0]) return Promise.reject({statusCode: 404, msg: 'Sorry, there is no review with that ID.'})
-        return db.query(`
         SELECT * FROM comments
         WHERE review_id = $1
-        `, [review_id])
-    })
-    .then(({rows}) =>  rows)
+        LIMIT $2 OFFSET $3
+        `, [review_id, limit, limit * (p - 1)])
+    .then(({rows}) => rows)
 }
 
 exports.addComment = (review_id, author, body) => {

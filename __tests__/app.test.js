@@ -357,6 +357,38 @@ describe('/api/comments', () => {
                     expect(body).toEqual({comments: []})
                 })
             })
+            test('Optional parameters - limit', () => {
+                return request(app).get('/api/reviews/2/comments?limit=2').expect(200).then(({body}) => {
+                    expect(body.comments.length).toBe(2)
+                })
+            })
+            test('Optional parameters - p', () => {
+                return request(app).get('/api/reviews/2/comments?limit=2&p=2').expect(200).then(({body}) => {
+                    expect(body.comments[0]).toEqual({
+                        "author": "mallionaire",
+                        "body": "Now this is a story all about how, board games turned my life upside down",
+                        "comment_id": 5,
+                        "created_at": "2021-01-18T10:24:05.410Z",
+                        "review_id": 2,
+                        "votes": 13,
+                    })
+                })
+            })
+            test('Optional parameters - limit - invalid input', () => {
+                return request(app).get('/api/reviews/2/comments?limit=beans').expect(400).then(({body}) => {
+                    expect(body.msg).toBe("Input of incorrect data type.")
+                })
+            })
+            test('Optional parameters - p - invalid input', () => {
+                return request(app).get('/api/reviews/2/comments?p=beans').expect(400).then(({body}) => {
+                    expect(body.msg).toBe("Input of incorrect data type.")
+                })
+            })
+            test('Optional parameters - p - nonexistent page', () => {
+                return request(app).get('/api/reviews/2/comments?p=99').expect(404).then(({body}) => {
+                    expect(body.msg).toBe(`There are not enough results to have a page 99`)
+                })
+            })
         })
     })
 
