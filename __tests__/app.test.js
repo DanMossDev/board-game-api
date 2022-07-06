@@ -349,7 +349,7 @@ describe('/api/comments', () => {
                     expect(body.msg).toBe("Input of incorrect data type.")
                 })
             })
-            test('Patch with a review_id that does not exist', () => {
+            test('Patch with a comment_id that does not exist', () => {
                 const patchSend = {inc_votes: 20}
                 
                 return request(app).patch('/api/comments/99')
@@ -359,7 +359,7 @@ describe('/api/comments', () => {
                     expect(body.msg).toBe("Sorry, there is no comment with that ID.")
                 })
             })
-            test('Patch with a review_id of invalid data type', () => {
+            test('Patch with a comment_id of invalid data type', () => {
                 const patchSend = {inc_votes: 15}
                 
                 return request(app).patch('/api/comments/ninetynine')
