@@ -104,6 +104,23 @@
       "votes": 15
     }
   },
+  "POST /api/reviews": {
+    "description": "Posts a new review",
+    "queries": [],
+    "exampleResponse": {
+      "review_id": 3,
+      "title": "Occaecat consequat officia in quis commodo.",
+      "designer": "Ollie Tabooger",
+      "owner": "mallionaire",
+      "review_img_url":
+        "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+      "review_body": "Lorem ipsum has never been so lorem ip-fun!",
+      "category": "euro game",
+      "created_at": "2021-01-18T10:01:41.251Z",
+      "votes": 0,
+      "comment_count": 0
+    }
+  },
   "POST /api/reviews/:review_id/comments": {
     "description": "Posts a new comment on the specified review",
     "queries": [],

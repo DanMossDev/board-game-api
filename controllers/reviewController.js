@@ -2,6 +2,7 @@ const {
     fetchReviews,
     fetchReview,
     updateReview,
+    addReview,
     fetchComments,
     addComment
 } = require('../models/reviewModel')
@@ -34,9 +35,18 @@ exports.patchReview = async (req, res, next) => {
     } catch (err) { next(err) }
 }
 
+exports.postReview = async (req, res, next) => {
+    if (!req.body.hasOwnProperty('title') || !req.body.hasOwnProperty('owner') || !req.body.hasOwnProperty('designer') || !req.body.hasOwnProperty('category') || !req.body.hasOwnProperty('review_body')) {
+        return next({statusCode: 400, msg: "Patch body must contain title, owner, designer, category, and review_body properties"})
+    }
+    try {
+    const review = await addReview(req.body)
+    res.status(201).send(review)
+    } catch (err) { console.log(err); next(err) }
+}
+
 exports.getComments = async (req, res, next) => {
     const {review_id} = req.params
-
     try {
     const comments = await fetchComments(review_id)
     res.status(200).send({comments})
@@ -47,7 +57,7 @@ exports.postComment = async (req, res, next) => {
     const {review_id} = req.params
     const {username, body} = req.body
 
-    if (!username || !body) next({statusCode: 400, msg: "Patch body must contain a username and body text for the comment"})
+    if (!username || !body) return next({statusCode: 400, msg: "Patch body must contain a username and body text for the comment"})
     
     try {
     const comment = await addComment(review_id, username, body)
