@@ -354,6 +354,27 @@ describe('/api/reviews', () => {
             })
         })
     })
+    describe('DELETE requests', () => {
+        describe('DELETE /api/reviews/:review_id', () => {
+            test('Happy path', () => {
+                return request(app).delete('/api/reviews/2').expect(204).then(() => {
+                    return request(app).get('/api/reviews/2/').expect(404).then(({body}) => {
+                        expect(body.msg).toBe("Sorry, there is no review with that ID.")
+                    })
+                })
+            })
+            test('Valid but nonexistent review_id', () => {
+                return request(app).delete('/api/reviews/99').expect(404).then(({body}) => {
+                    expect(body.msg).toBe("Sorry, there is no review with that ID.")
+                })
+            })
+            test('Invalid data type for review_id', () => {
+                return request(app).delete('/api/reviews/beans').expect(400).then(({body}) => {
+                    expect(body.msg).toBe("Input of incorrect data type.")
+                })
+            })
+        })
+    })
 })
 
 
