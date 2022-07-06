@@ -14,6 +14,14 @@
       ]
     }
   },
+  "POST /api/categories": {
+    "description": "Allows user to add a new category, must be unique",
+    "queries": [],
+    "exampleResponse": {
+      "slug": "roleplaying",
+      "description": "Games with traditional RPG elements, such as gaining XP, combat, and trade with NPCs and other players"
+    }
+  },
   "GET /api/reviews": {
     "description": "serves an array of all reviews",
     "queries": ["category", "sort_by", "order", "limit", "p"],
