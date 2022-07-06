@@ -17,7 +17,6 @@ app.use(express.json())
 //ROUTER
 app.use('/api', router)
 
-
 //DEFAULTS
 app.get('/', root)
 

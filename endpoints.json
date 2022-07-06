@@ -88,7 +88,7 @@
       "review_id": 9
     }
   },
-  "PATCH /api/reviews/:review_id/comments": {
+  "PATCH /api/reviews/:review_id": {
     "description": "updates comment in database with request body, returns updated comment",
     "queries": [],
     "exampleResponse": {
@@ -114,6 +114,18 @@
       "author": "bainesface",
       "body": "Yes it certainly is one of the games ever",
       "review_id": 1
+    }
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "updates comment in database with request body, returns updated comment",
+    "queries": [],
+    "exampleResponse": {
+      "comment_id": 2,
+      "body": "My dog loved this game too!",
+      "votes": 16,
+      "author": "mallionaire",
+      "review_id": 3,
+      "created_at": "2021-01-18T10:09:05.410Z"
     }
   },
   "DELETE /api/comments/:comment_id": {
