@@ -1,19 +1,19 @@
 const db = require('../db/connection')
 const {createRef} = require('../db/seeds/utils')
 
-exports.fetchReviews = (sort_by = 'created_at', order = 'DESC', category) => {
+exports.fetchReviews = (sort_by = 'created_at', order = 'DESC', category, limit = 10, p = 1) => {
     const validSorts = ['review_id', 'title', 'category', 'designer', 'owner', 'review_body', 'review_img_url', 'created_at', 'votes']
-    const queries = []
+    const queries = [limit, limit * (p - 1)]
     
     if (validSorts.indexOf(`${sort_by}`) === -1) return Promise.reject({statusCode: 400, msg: "Invalid sort_by; please refer to documentation."})
     
     
     let query = `
-    SELECT reviews.*, COUNT(comments.review_id)::INT AS comment_count FROM reviews
+    SELECT reviews.*, COUNT(comments.review_id)::INT AS comment_count, COUNT(*) OVER()::INT AS total_count FROM reviews
     LEFT JOIN comments ON reviews.review_id = comments.review_id
     `
     if (category) {
-        query += ' WHERE category = $1'
+        query += ' WHERE category = $3'
         queries.push(category)
     }
 
@@ -31,8 +31,17 @@ exports.fetchReviews = (sort_by = 'created_at', order = 'DESC', category) => {
         default:
             return Promise.reject({statusCode: 400, msg: "Results must be ordered by ASC or DESC"})
     }
+    query += ' LIMIT $1 OFFSET $2'
     return db.query(query, queries)
-    .then(({rows}) => rows)
+    .then(({rows}) => {
+        if (rows.length > 0) return rows
+
+        return db.query(`SELECT COUNT(*)::INT AS total_count FROM reviews`)
+        .then(({rows}) => {
+            if (limit * (p) > rows[0]?.total_count) return Promise.reject({statusCode: 404, msg: `There are not enough results to have a page ${p}`})
+            else return []
+        })
+    })
 }
 
 exports.fetchReview = (review_id) => {

@@ -8,9 +8,9 @@ const {
 } = require('../models/reviewModel')
 
 exports.getReviews = async (req, res, next) => {
-    const {sort_by, order, category} = req.query
+    const {sort_by, order, category, limit, p} = req.query
     try {
-    const reviews = await fetchReviews(sort_by, order, category)
+    const reviews = await fetchReviews(sort_by, order, category, limit, p)
     res.status(200).send(reviews)
     } catch (err) { next(err) }
 }
@@ -42,7 +42,7 @@ exports.postReview = async (req, res, next) => {
     try {
     const review = await addReview(req.body)
     res.status(201).send(review)
-    } catch (err) { console.log(err); next(err) }
+    } catch (err) { next(err) }
 }
 
 exports.getComments = async (req, res, next) => {
