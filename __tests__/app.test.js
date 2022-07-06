@@ -61,6 +61,24 @@ describe('/api/users', () => {
                 })
             })
         })
+        describe('GET /api/users/:username', () => {
+            test('Happy path', () => {
+                return request(app).get('/api/users/dav3rid').expect(200).then(({body}) => {
+                    expect(Array.isArray(body)).toBe(false)
+                    expect(body).toEqual({
+                        "username": "dav3rid",
+                        "name": "dave",
+                        "avatar_url":
+                          "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
+                      })
+                })
+            })
+            test('username does not exist', () => {
+                return request(app).get('/api/users/moss123').expect(404).then(({body}) => {
+                    expect(body.msg).toBe('Sorry, there is no user with that name.')
+                })
+            })
+        })
     })
 })
 

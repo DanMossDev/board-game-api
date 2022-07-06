@@ -9,7 +9,8 @@ const { //REVIEWS CONTROLLER
     patchReview
 } = require('./controllers/reviewController')
 const { //USERS CONTROLLER
-    getUsers
+    getUsers,
+    getUser
 } = require('./controllers/userController')
 const { //COMMENTS CONTROLLER
     getComments,
@@ -57,6 +58,9 @@ app.post('/api/reviews/:review_id/comments', postComment)
 
 //DELETE
 app.delete('/api/comments/:comment_id', deleteComment)
+
+
+app.get('/api/users/:username', getUser)
 
 
 //ERROR HANDLING
