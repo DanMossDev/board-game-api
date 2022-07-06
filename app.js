@@ -14,7 +14,8 @@ const { //USERS CONTROLLER
 const { //COMMENTS CONTROLLER
     getComments,
     postComment,
-    deleteComment
+    deleteComment,
+    patchComment
 } = require('./controllers/commentController')
 
 const { //ERROR HANDLING
@@ -58,6 +59,10 @@ app.post('/api/reviews/:review_id/comments', postComment)
 //DELETE
 app.delete('/api/comments/:comment_id', deleteComment)
 
+
+
+
+app.patch('/api/comments/:comment_id', patchComment)
 
 //ERROR HANDLING
 app.all('*', badPath)

@@ -324,4 +324,51 @@ describe('/api/comments', () => {
             })
         })
     })
+
+    describe('PATCH requests', () => {
+        describe('PATCH /api/comments/:comment_id', () => {
+            test('Happy path', () => {
+                return request(app).patch('/api/comments/2').expect(200).send({inc_votes: 3}).then(({body}) => {
+                    expect(body).toEqual({
+                        comment_id: 2,
+                        body: 'My dog loved this game too!',
+                        votes: 16,
+                        author: 'mallionaire',
+                        review_id: 3,
+                        created_at: "2021-01-18T10:09:05.410Z",
+                      })
+                })
+            })
+            test('Body missing inc_votes', () => {
+                return request(app).patch('/api/comments/2').expect(400).send({beans: "Oo yes please"}).then(({body}) => {
+                    expect(body.msg).toBe("Patch body must contain the number of incoming votes.")
+                })
+            })
+            test('inc_votes wrong data type', () => {
+                return request(app).patch('/api/comments/2').expect(400).send({inc_votes: "eleven"}).then(({body}) => {
+                    expect(body.msg).toBe("Input of incorrect data type.")
+                })
+            })
+            test('Patch with a review_id that does not exist', () => {
+                const patchSend = {inc_votes: 20}
+                
+                return request(app).patch('/api/comments/99')
+                .expect(404)
+                .send(patchSend)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Sorry, there is no comment with that ID.")
+                })
+            })
+            test('Patch with a review_id of invalid data type', () => {
+                const patchSend = {inc_votes: 15}
+                
+                return request(app).patch('/api/comments/ninetynine')
+                .expect(400)
+                .send(patchSend)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Input of incorrect data type.")
+                })
+            })
+        })
+    })
 })
