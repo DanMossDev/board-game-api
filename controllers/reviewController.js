@@ -2,6 +2,8 @@ const {
     fetchReviews,
     fetchReview,
     updateReview,
+    fetchComments,
+    addComment
 } = require('../models/reviewModel')
 
 exports.getReviews = async (req, res, next) => {
@@ -14,7 +16,6 @@ exports.getReviews = async (req, res, next) => {
 
 exports.getReview = async (req, res, next) => {
     const {review_id} = req.params
-
     try {
     const review = await fetchReview(review_id)
     res.status(200).send(review)
@@ -25,10 +26,31 @@ exports.patchReview = async (req, res, next) => {
     const {review_id} = req.params
     const {inc_votes} = req.body
     
-    if (!inc_votes) next({statusCode: 400, msg: "Patch body must contain the number of incoming votes."})
+    if (!inc_votes) return next({statusCode: 400, msg: "Patch body must contain the number of incoming votes."})
     
     try {
     const review = await updateReview(review_id, inc_votes)
     res.status(200).send(review)
+    } catch (err) { next(err) }
+}
+
+exports.getComments = async (req, res, next) => {
+    const {review_id} = req.params
+
+    try {
+    const comments = await fetchComments(review_id)
+    res.status(200).send({comments})
+    } catch (err) { next(err) }
+}
+
+exports.postComment = async (req, res, next) => {
+    const {review_id} = req.params
+    const {username, body} = req.body
+
+    if (!username || !body) next({statusCode: 400, msg: "Patch body must contain a username and body text for the comment"})
+    
+    try {
+    const comment = await addComment(review_id, username, body)
+    res.status(201).send(comment)
     } catch (err) { next(err) }
 }
