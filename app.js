@@ -1,6 +1,7 @@
 const express = require('express')
 const router = require('./routers/router')
 const {root} = require('./controllers/rootController')
+const cors = require('cors')
 
 const { //ERROR HANDLING
     badPath,
@@ -11,6 +12,8 @@ const { //ERROR HANDLING
 
 
 const app = express()
+
+app.use(cors())
 
 app.use(express.json())
 
