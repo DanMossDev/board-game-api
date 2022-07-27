@@ -2,7 +2,7 @@ const db = require('../db/connection')
 const {createRef} = require('../db/seeds/utils')
 
 exports.fetchReviews = async (sort_by = 'created_at', order = 'DESC', category, limit = 10, p = 1) => {
-    const validSorts = ['review_id', 'title', 'category', 'designer', 'owner', 'review_body', 'review_img_url', 'created_at', 'votes']
+    const validSorts = ['review_id', 'title', 'category', 'designer', 'owner', 'review_body', 'review_img_url', 'created_at', 'votes', 'comment_count']
     const queries = [limit, limit * (p - 1)]
     
     if (validSorts.indexOf(`${sort_by}`) === -1) return Promise.reject({statusCode: 400, msg: "Invalid sort_by; please refer to documentation."})
