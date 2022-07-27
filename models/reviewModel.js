@@ -6,7 +6,6 @@ exports.fetchReviews = async (sort_by = 'created_at', order = 'DESC', category, 
     const queries = [limit, limit * (p - 1)]
     
     if (validSorts.indexOf(`${sort_by}`) === -1) return Promise.reject({statusCode: 400, msg: "Invalid sort_by; please refer to documentation."})
-    if (sort_by === 'comment_count') sort_by = 'COUNT(comments.review_id)'
     
     const returnArr = await db.query(`SELECT COUNT(*)::INT AS total_count FROM reviews`)
     const {total_count} = returnArr.rows[0]
@@ -22,8 +21,9 @@ exports.fetchReviews = async (sort_by = 'created_at', order = 'DESC', category, 
     }
 
     query += `
-    GROUP BY reviews.review_id
-    ORDER BY reviews.${sort_by} `
+    GROUP BY reviews.review_id `
+    query += sort_by === 'comment_count' ? `ORDER BY comment_count ` :
+    `ORDER BY reviews.${sort_by} `
     order = order.toUpperCase()
     switch (order) {
         case 'ASC': 
